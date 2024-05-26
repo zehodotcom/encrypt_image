@@ -69,30 +69,52 @@ original_image_data = None
 def encrypt_image():
     if original_image_data:
         encrypted_data = fernet.encrypt(original_image_data)
-        with open("encrypted_image.enc", "wb") as encrypted_file:
-            encrypted_file.write(encrypted_data)
-        # Display encrypted image placeholder
-        encrypted_image_canvas.create_text(150, 150, text="Encrypted", fill="black")
-        messagebox.showinfo(
-            "Success", "Image encrypted and saved as 'encrypted_image.enc'"
+        save_path = filedialog.asksaveasfilename(
+            defaultextension=".enc", filetypes=[("Encrypted files", "*.enc")]
         )
+        if save_path:
+            with open(save_path, "wb") as encrypted_file:
+                encrypted_file.write(encrypted_data)
+            # Display encrypted image placeholder
+            encrypted_image_canvas.create_text(150, 150, text="Encrypted", fill="black")
+            messagebox.showinfo(
+                "Success", f"Image encrypted and saved as '{save_path}'"
+            )
 
 
 # Function to decrypt the image
 def decrypt_image():
-    try:
-        with open("encrypted_image.enc", "rb") as encrypted_file:
-            encrypted_data = encrypted_file.read()
-        decrypted_data = fernet.decrypt(encrypted_data)
-        image_bytes = io.BytesIO(decrypted_data)
-        image = Image.open(image_bytes)
-        image.thumbnail((300, 300))
-        img = ImageTk.PhotoImage(image)
-        decrypted_image_canvas.create_image(150, 150, image=img)
-        decrypted_image_canvas.image = img
-        messagebox.showinfo("Success", "Image decrypted and displayed")
-    except Exception as e:
-        messagebox.showerror("Error", str(e))
+    file_path = filedialog.askopenfilename(filetypes=[("Encrypted files", "*.enc")])
+    if file_path:
+        try:
+            with open(file_path, "rb") as encrypted_file:
+                encrypted_data = encrypted_file.read()
+            decrypted_data = fernet.decrypt(encrypted_data)
+            image_bytes = io.BytesIO(decrypted_data)
+            image = Image.open(image_bytes)
+            image.thumbnail((300, 300))
+            img = ImageTk.PhotoImage(image)
+            decrypted_image_canvas.create_image(150, 150, image=img)
+            decrypted_image_canvas.image = img
+
+            # Ask the user where to save the decrypted image
+            save_path = filedialog.asksaveasfilename(
+                defaultextension=".png",
+                filetypes=[
+                    ("PNG files", "*.png"),
+                    ("JPEG files", "*.jpg"),
+                    ("All files", "*.*"),
+                ],
+            )
+            if save_path:
+                image.save(save_path)
+                messagebox.showinfo(
+                    "Success", f"Image decrypted and saved as '{save_path}'"
+                )
+            else:
+                messagebox.showinfo("Success", "Image decrypted and displayed")
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
 
 
 # Buttons to load, encrypt, and decrypt images
