@@ -34,7 +34,6 @@ def load_image():
     file_path = filedialog.askopenfilename()
     if file_path:
         image = Image.open(file_path)
-        image.thumbnail((300, 300))
         img = ImageTk.PhotoImage(image)
         original_image_canvas.create_image(150, 150, image=img)
         original_image_canvas.image = img
@@ -92,7 +91,6 @@ def decrypt_image():
             decrypted_data = fernet.decrypt(encrypted_data)
             image_bytes = io.BytesIO(decrypted_data)
             image = Image.open(image_bytes)
-            image.thumbnail((300, 300))
             img = ImageTk.PhotoImage(image)
             decrypted_image_canvas.create_image(150, 150, image=img)
             decrypted_image_canvas.image = img
