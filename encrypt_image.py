@@ -3,22 +3,30 @@ from tkinter import filedialog, messagebox
 from PIL import Image, ImageTk
 import io
 from cryptography.fernet import Fernet
+from ttkthemes import ThemedTk
+from tkinter import ttk
 
 # Set up the main application window
-root = tk.Tk()
+root = ThemedTk(theme="radiance")
 root.title("Image Encryption/Decryption")
+root.geometry("1100x500")
+root.resizable(False, False)  # Disable window resizing
 
 # Create a frame for displaying the images
-frame = tk.Frame(root)
-frame.pack()
+frame = ttk.Frame(root)
+frame.pack(expand=True, fill=tk.BOTH)
 
 # Labels to display images
-original_image_label = tk.Label(frame, text="Original Image")
+original_image_label = ttk.Label(frame, text="Original Image")
 original_image_label.grid(row=0, column=0)
-encrypted_image_label = tk.Label(frame, text="Encrypted Image")
+encrypted_image_label = ttk.Label(frame, text="Encrypted Image")
 encrypted_image_label.grid(row=0, column=1)
-decrypted_image_label = tk.Label(frame, text="Decrypted Image")
+decrypted_image_label = ttk.Label(frame, text="Decrypted Image")
 decrypted_image_label.grid(row=0, column=2)
+
+# Configure column widths to center the text
+for col in range(3):
+    frame.grid_columnconfigure(col, weight=1)
 
 # Canvas to show images
 original_image_canvas = tk.Canvas(frame, width=300, height=300)
@@ -115,12 +123,16 @@ def decrypt_image():
             messagebox.showerror("Error", str(e))
 
 
+# Frame to hold the buttons
+button_frame = ttk.Frame(root)
+button_frame.pack(side=tk.BOTTOM, fill=tk.X)
+
 # Buttons to load, encrypt, and decrypt images
-load_button = tk.Button(root, text="Load Image", command=load_image)
-load_button.pack(side=tk.LEFT)
-encrypt_button = tk.Button(root, text="Encrypt Image", command=encrypt_image)
-encrypt_button.pack(side=tk.LEFT)
-decrypt_button = tk.Button(root, text="Decrypt Image", command=decrypt_image)
-decrypt_button.pack(side=tk.LEFT)
+load_button = ttk.Button(button_frame, text="Load Image", command=load_image)
+load_button.pack(side=tk.LEFT, padx=10, pady=10, expand=True, fill=tk.X)
+encrypt_button = ttk.Button(button_frame, text="Encrypt Image", command=encrypt_image)
+encrypt_button.pack(side=tk.LEFT, padx=10, pady=10, expand=True, fill=tk.X)
+decrypt_button = ttk.Button(button_frame, text="Decrypt Image", command=decrypt_image)
+decrypt_button.pack(side=tk.LEFT, padx=10, pady=10, expand=True, fill=tk.X)
 
 root.mainloop()
