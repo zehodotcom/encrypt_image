@@ -39,17 +39,22 @@ decrypted_image_canvas.grid(row=1, column=2)
 
 # Function to load an image
 def load_image():
-    file_path = filedialog.askopenfilename()
+    file_path = filedialog.askopenfilename(
+        filetypes=[("Image files", "*.jpg *.jpeg *.png *.bmp *.gif")]
+    )
     if file_path:
-        image = Image.open(file_path)
-        img = ImageTk.PhotoImage(image)
-        original_image_canvas.create_image(150, 150, image=img)
-        original_image_canvas.image = img
-        # Save image data for encryption
-        image_bytes = io.BytesIO()
-        image.save(image_bytes, format=image.format)
-        global original_image_data
-        original_image_data = image_bytes.getvalue()
+        try:
+            image = Image.open(file_path)
+            img = ImageTk.PhotoImage(image)
+            original_image_canvas.create_image(150, 150, image=img)
+            original_image_canvas.image = img
+            # Save image data for encryption
+            image_bytes = io.BytesIO()
+            image.save(image_bytes, format=image.format)
+            global original_image_data
+            original_image_data = image_bytes.getvalue()
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load image: {e}")
 
 
 # Function to generate and save a key
